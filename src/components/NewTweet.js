@@ -1,8 +1,12 @@
 import React,{Component} from 'react'
+import {connect} from 'react-redux'
+import {handleAddTweet} from '../actions/tweets'
+import {Redirect} from 'react-router-dom'
 
 class NewTweet extends Component{
     state = {
-        text:''
+        text:'',
+        toHome: false
     }
 
     handleChange = (e) => {
@@ -16,21 +20,27 @@ class NewTweet extends Component{
     handleSubmit = (e) => {
         e.preventDefault()
         const {text} = this.state
+        const {dispatch,id} = this.props
 
-        console.log("New Tweet",text)
+        dispatch(handleAddTweet(text,id))
+
         this.setState(() => ({
-         text:''   
+         text:'',
+         tohome: id ? false : true
         }))        
     }
 
     render(){
-        const { text } = this.state
+        const { text ,tohome} = this.state
         const tweetLeft = 200 - text.length
 
-        {/*todo: Return to / if submitted*/}
+        if(tohome ===true){
+            return <Redirect to='/' />
+        }
+  
         return(
             <div>
-                <h3 className="center"></h3>
+                <h3 className="center">Compose new tweet</h3>
                 <form className="new-tweet" onSubmit={this.handleSubmit}>
                     <textarea 
                     placeholder="What's happening"
@@ -48,7 +58,7 @@ class NewTweet extends Component{
                     <button
                         className='btn'
                         onClick={this.handleSubmit}
-                        disable = {text === ''}
+                        disable ={text === ''}
                     >
                         Submit
                     </button>
@@ -58,4 +68,4 @@ class NewTweet extends Component{
     }
 }
 
-export default NewTweet
+export default connect()(NewTweet)
